@@ -23,7 +23,7 @@ public class MainActivity extends AppCompatActivity {
 
     ActivityMainBinding binding;
     ArrayList<Shot> shots = new ArrayList<>();
-    ShotAdapter shotAdapter = new ShotAdapter(shots);
+    ShotAdapter shotAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,6 +37,12 @@ public class MainActivity extends AppCompatActivity {
 
         setSupportActionBar(binding.toolbar);
 
+        shotAdapter = new ShotAdapter(shots, this);
+        binding.rvShots.setLayoutManager(new LinearLayoutManager(this));
+        binding.rvShots.setAdapter(shotAdapter);
+        binding.rvShots.setHasFixedSize(true);
+
+
         binding.toolbar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -47,10 +53,6 @@ public class MainActivity extends AppCompatActivity {
 
         Service.getInstance().getPopularShots(1);
         binding.setLoading(true);
-
-        binding.rvShots.setLayoutManager(new LinearLayoutManager(this));
-        binding.rvShots.setAdapter(shotAdapter);
-        binding.rvShots.setHasFixedSize(true);
     }
 
     public void init() {

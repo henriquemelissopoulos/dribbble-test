@@ -1,6 +1,10 @@
 package com.henriquemelissopoulos.dribbbletest.view.adapter;
 
+import android.content.Context;
+
+import com.bumptech.glide.Glide;
 import com.henriquemelissopoulos.dribbbletest.R;
+import com.henriquemelissopoulos.dribbbletest.controller.Utils;
 import com.henriquemelissopoulos.dribbbletest.databinding.AdapterShotBinding;
 import com.henriquemelissopoulos.dribbbletest.model.Shot;
 
@@ -11,9 +15,11 @@ import java.util.ArrayList;
  */
 public class ShotAdapter extends SimpleAdapter<Shot, AdapterShotBinding> {
 
+    Context context;
 
-    public ShotAdapter(ArrayList<Shot> data) {
+    public ShotAdapter(ArrayList<Shot> data, Context context) {
         super(data);
+        this.context = context;
     }
 
     @Override
@@ -23,7 +29,19 @@ public class ShotAdapter extends SimpleAdapter<Shot, AdapterShotBinding> {
 
 
     @Override
-    protected void doOnBindViewHolder(SimpleAdapter.SimpleViewHolder holder, AdapterShotBinding binding, int position, Shot item) {
-        binding.setShot(item);
+    protected void doOnBindViewHolder(SimpleAdapter.SimpleViewHolder holder, AdapterShotBinding binding, int position, Shot shot) {
+        binding.setShot(shot);
+
+        if (!Utils.isEmpty(shot.getImages().getHidpi())) {
+            Glide.with(context)
+                    .load(shot.getImages().getHidpi())
+                    .centerCrop()
+                    .into(binding.ivShot);
+        } else {
+            Glide.with(context)
+                    .load(shot.getImages().getNormal())
+                    .centerCrop()
+                    .into(binding.ivShot);
+        }
     }
 }

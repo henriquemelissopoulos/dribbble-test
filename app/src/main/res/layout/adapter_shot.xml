@@ -54,7 +54,8 @@
                 android:layout_alignParentRight="true"
                 android:layout_alignParentEnd="true"
                 style="@style/ShotLabel"
-                tools:text="45"/>
+                tools:text="45"
+                android:text="@{String.valueOf(shot.viewCount)}"/>
 
         </RelativeLayout>
     </RelativeLayout>
