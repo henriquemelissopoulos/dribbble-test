@@ -13,7 +13,8 @@ import io.realm.annotations.RealmClass;
 @RealmClass
 public class Shot extends RealmObject {
 
-    @PrimaryKey private int id; private String title = "";
+    @PrimaryKey private int id;
+    private String title = "";
     private String description = "";
     @SerializedName("views_count") private int viewCount = 0;
     @SerializedName("user") private User user = new User();
