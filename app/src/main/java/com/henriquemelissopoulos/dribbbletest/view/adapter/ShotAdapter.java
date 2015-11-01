@@ -4,7 +4,6 @@ import android.content.Context;
 
 import com.bumptech.glide.Glide;
 import com.henriquemelissopoulos.dribbbletest.R;
-import com.henriquemelissopoulos.dribbbletest.controller.Utils;
 import com.henriquemelissopoulos.dribbbletest.databinding.AdapterShotBinding;
 import com.henriquemelissopoulos.dribbbletest.model.Shot;
 
@@ -32,16 +31,10 @@ public class ShotAdapter extends SimpleAdapter<Shot, AdapterShotBinding> {
     protected void doOnBindViewHolder(SimpleAdapter.SimpleViewHolder holder, AdapterShotBinding binding, int position, Shot shot) {
         binding.setShot(shot);
 
-        if (!Utils.isEmpty(shot.getImages().getHidpi())) {
-            Glide.with(context)
-                    .load(shot.getImages().getHidpi())
-                    .centerCrop()
-                    .into(binding.ivShot);
-        } else {
-            Glide.with(context)
-                    .load(shot.getImages().getNormal())
-                    .centerCrop()
-                    .into(binding.ivShot);
-        }
+        Glide.with(context)
+                .load(shot.getImages().getNormal())
+                .thumbnail(Glide.with(context).load(shot.getImages().getTeaser()).centerCrop())
+                .centerCrop()
+                .into(binding.ivShot);
     }
 }
