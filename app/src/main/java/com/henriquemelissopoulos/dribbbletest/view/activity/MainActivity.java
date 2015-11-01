@@ -65,7 +65,7 @@ public class MainActivity extends AppCompatActivity {
         if (bus.key == Config.BUS_GET_SHOTS) {
 
             if (bus.error) {
-                Toast.makeText(this, "Ocorreu um erro durante a requisição." + bus.info, Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, R.string.general_error_message + bus.info, Toast.LENGTH_SHORT).show();
                 return;
             }
 

@@ -6,7 +6,7 @@
 
     <application
         android:name=".view.application.DribbbleTestApplication"
-        android:allowBackup="true"
+        android:allowBackup="false"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:supportsRtl="true"
@@ -20,6 +20,12 @@
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+        </activity>
+
+        <activity
+            android:name=".view.activity.ShotDetailActivity"
+            android:configChanges="orientation|screenSize"
+            android:screenOrientation="sensorPortrait" >
         </activity>
     </application>
 
