@@ -10,33 +10,43 @@ import android.text.method.LinkMovementMethod;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.github.ksoichiro.android.observablescrollview.ObservableScrollViewCallbacks;
 import com.github.ksoichiro.android.observablescrollview.ScrollState;
 import com.github.ksoichiro.android.observablescrollview.ScrollUtils;
 import com.henriquemelissopoulos.dribbbletest.R;
 import com.henriquemelissopoulos.dribbbletest.controller.Bus;
+import com.henriquemelissopoulos.dribbbletest.controller.Config;
+import com.henriquemelissopoulos.dribbbletest.controller.GlideCircleTransform;
 import com.henriquemelissopoulos.dribbbletest.controller.Utils;
 import com.henriquemelissopoulos.dribbbletest.databinding.ActivityShotDetailBinding;
 import com.henriquemelissopoulos.dribbbletest.model.Shot;
-
-import java.util.ArrayList;
+import com.henriquemelissopoulos.dribbbletest.network.Service;
 
 import de.greenrobot.event.EventBus;
+import io.realm.Realm;
 
 /**
  * Created by h on 01/11/15.
  */
 public class ShotDetailActivity extends AppCompatActivity {
 
-    ActivityShotDetailBinding binding;
-    int flexibleSpaceHeight, statusBarHeight, baseColor, statusBarColor;
+    private ActivityShotDetailBinding binding;
+    private Realm realm;
+    private int flexibleSpaceHeight, statusBarHeight, baseColor, statusBarColor;
+    private int shotID;
+    private Shot shot;
+    private TextView tvToolbarTitle;
 
-    TextView tvToolbarTitle;
 
-
-    public static Intent startIntent(Context context) {
-        return new Intent(context, ShotDetailActivity.class);
+    public static final String SHOT_ID = "shotID";
+    public static Intent startIntent(Context context, int shotID) {
+        Intent intent = new Intent(context, ShotDetailActivity.class);
+        intent.putExtra(SHOT_ID, shotID);
+        return intent;
     }
 
 
@@ -44,9 +54,17 @@ public class ShotDetailActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        shotID = getIntent().getIntExtra(SHOT_ID, -1);
+        if (shotID < 0) {
+            invalidShot();
+            return;
+        }
+
         if(!EventBus.getDefault().isRegistered(this)) {
             EventBus.getDefault().register(this);
         }
+
+        realm = Realm.getDefaultInstance();
 
         //Draw over status bar
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
@@ -54,19 +72,18 @@ public class ShotDetailActivity extends AppCompatActivity {
             getWindow().setStatusBarColor(getResources().getColor(R.color.transparent));
         }
 
-
-        flexibleSpaceHeight = getResources().getDimensionPixelSize(R.dimen.shot_height);
-        statusBarHeight = Utils.getStatusBarHeight(this);
-        baseColor = getResources().getColor(R.color.colorPrimary);
-        statusBarColor = getResources().getColor(R.color.black);
-
         binding = DataBindingUtil.setContentView(this, R.layout.activity_shot_detail);
 
         setSupportActionBar(binding.toolbar);
         if (getSupportActionBar() != null) getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        tvToolbarTitle = Utils.getToolbartvTitle(binding.toolbar); //to accesss toolbar title textview
 
-        tvToolbarTitle = Utils.getToolbartvTitle(binding.toolbar);
 
+        //Configure scroll animation
+        flexibleSpaceHeight = getResources().getDimensionPixelSize(R.dimen.shot_height);
+        statusBarHeight = Utils.getStatusBarHeight(this);
+        baseColor = getResources().getColor(R.color.colorPrimary);
+        statusBarColor = getResources().getColor(R.color.black);
 
         binding.obScrollView.setScrollViewCallbacks(new ObservableScrollViewCallbacks() {
             @Override
@@ -83,12 +100,45 @@ public class ShotDetailActivity extends AppCompatActivity {
             }
         });
 
+        findShot();
+        Service.getInstance().getShotDetail(shotID);
 
-        init();
+        //shot not found on DB, set loading to inform user of shot request
+        if (shot == null) {
+            binding.setLoading(true);
+        } else {
+            init();
+        }
+    }
+
+
+    public void findShot() {
+        shot = realm.where(Shot.class).equalTo(Shot.FIELD_SHOT_ID, shotID).findFirst();
+    }
+
+
+    public void invalidShot() {
+        finish();
+        Toast.makeText(this, R.string.general_error_message, Toast.LENGTH_SHORT).show();
     }
 
 
     public void init() {
+
+        binding.setShot(shot);
+
+        Glide.with(this)
+                .load(shot.getImages().getHidpi())
+                .thumbnail(Glide.with(this).load(shot.getImages().getNormal()).centerCrop())
+                .diskCacheStrategy(DiskCacheStrategy.SOURCE)
+                .centerCrop()
+                .into(binding.ivShot);
+
+        Glide.with(this)
+                .load(shot.getUser().getAvatar())
+                .centerCrop()
+                .transform(new GlideCircleTransform(this))
+                .into(binding.ivAvatar);
 
         ScrollUtils.addOnGlobalLayoutListener(binding.rlRoot, new Runnable() {
             @Override
@@ -97,6 +147,7 @@ public class ShotDetailActivity extends AppCompatActivity {
             }
         });
 
+        //HTML requirement
         binding.tvDescription.setMovementMethod(LinkMovementMethod.getInstance());
     }
 
@@ -124,20 +175,24 @@ public class ShotDetailActivity extends AppCompatActivity {
     }
 
 
-    public void onEventMainThread(Bus<ArrayList<Shot>> bus) {
+    public void onEventMainThread(Bus<Shot> bus) {
+        if (bus.key == Config.BUS_GET_SHOT_DETAIL) {
 
-//        if (bus.key == Config.BUS_GET_SHOTS) {
-//
-//            if (bus.error) {
-//                Toast.makeText(this, R.string.general_error_message + bus.info, Toast.LENGTH_SHORT).show();
-//                return;
-//            }
-//
-//            shots = bus.data;
-//
-//            binding.setLoading(false);
-//            init();
-//        }
+            if (bus.error) {
+                Toast.makeText(this, R.string.general_error_message + bus.info, Toast.LENGTH_SHORT).show();
+                binding.setLoading(false);
+                return;
+            }
+
+            shot = bus.data;
+            if (shot == null) {
+                invalidShot();
+                return;
+            }
+
+            binding.setLoading(false);
+            init();
+        }
     }
 
 
@@ -156,6 +211,7 @@ public class ShotDetailActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        if (realm != null) realm.close();
         EventBus.getDefault().unregister(this);
     }
 

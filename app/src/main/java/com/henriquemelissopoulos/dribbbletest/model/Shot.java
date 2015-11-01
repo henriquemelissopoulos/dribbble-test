@@ -13,6 +13,8 @@ import io.realm.annotations.RealmClass;
 @RealmClass
 public class Shot extends RealmObject {
 
+    public static final String FIELD_SHOT_ID = "id";
+
     @PrimaryKey private int id;
     private String title = "";
     private String description = "";

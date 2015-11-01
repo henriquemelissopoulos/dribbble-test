@@ -41,7 +41,7 @@
                 android:layout_height="wrap_content"
                 android:paddingTop="@dimen/shot_height" >
 
-                <LinearLayout
+                <RelativeLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
@@ -62,44 +62,46 @@
                             android:id="@+id/ivAvatar"
                             android:layout_width="50dp"
                             android:layout_height="50dp"
-                            android:src="@drawable/ic_visibility_white_24dp"
-                            android:background="@color/black_50"
+                            tools:src="@drawable/ic_visibility_white_24dp"
+                            tools:background="@color/black_50"
                             android:layout_centerVertical="true"
                             android:layout_marginRight="15dp"
                             android:layout_marginEnd="15dp" />
 
-                        <!--android:text="@{shot.user.name}"-->
                         <TextView
                             android:id="@+id/tvName"
                             style="@style/ShotLabel"
                             android:textColor="@color/text_light"
-                            android:text="My Name"
+                            tools:text="My Name"
+                            android:text="@{shot.user.name}"
                             android:layout_centerVertical="true"
                             android:layout_toRightOf="@+id/ivAvatar"
                             android:layout_toEndOf="@+id/ivAvatar" />
 
                     </RelativeLayout>
 
-                    <!--android:text='@{Html.fromHtml(shot.description ?? "")}'-->
                     <TextView
                         android:id="@+id/tvDescription"
                         android:linksClickable="true"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:fontFamily="sans-serif-condensed"
-                        android:text="@string/lorem_test"
+                        tools:text="@string/lorem_test"
+                        android:text='@{Html.fromHtml(shot.description ?? "")}'
                         android:textSize="16sp"
-                        android:layout_marginTop="26dp"/>
+                        android:layout_marginTop="26dp"
+                        android:layout_below="@+id/rlUserInfo"/>
 
                     <android.support.v4.widget.ContentLoadingProgressBar
-                        android:id="@+id/pbSemiLoading"
+                        android:id="@+id/pbLoading"
                         style="?android:attr/progressBarStyleLarge"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center_horizontal"
+                        android:layout_centerHorizontal="true"
                         android:visibility="@{loading ? View.VISIBLE : View.GONE}"/>
 
-                </LinearLayout>
+                </RelativeLayout>
 
             </FrameLayout>
 

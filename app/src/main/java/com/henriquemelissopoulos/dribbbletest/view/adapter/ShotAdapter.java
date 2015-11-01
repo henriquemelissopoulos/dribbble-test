@@ -30,13 +30,13 @@ public class ShotAdapter extends SimpleAdapter<Shot, AdapterShotBinding> {
 
 
     @Override
-    protected void doOnBindViewHolder(SimpleAdapter.SimpleViewHolder holder, AdapterShotBinding binding, int position, Shot shot) {
+    protected void doOnBindViewHolder(SimpleAdapter.SimpleViewHolder holder, AdapterShotBinding binding, int position, final Shot shot) {
         binding.setShot(shot);
 
         binding.rlRoot.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                context.startActivity(ShotDetailActivity.startIntent(context));
+                context.startActivity(ShotDetailActivity.startIntent(context, shot.getId()));
             }
         });
 

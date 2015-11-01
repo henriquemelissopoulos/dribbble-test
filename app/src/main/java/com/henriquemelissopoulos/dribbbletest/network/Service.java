@@ -47,12 +47,41 @@ public class Service {
 //                        Log.d("shot", "- + \n");
 //                    }
 
-                    EventBus.getDefault().post(new Bus<ArrayList<Shot>>(Config.BUS_GET_SHOTS).data(shots));
+                    EventBus.getDefault().post(new Bus<ArrayList<Shot>>(Config.BUS_GET_POPULAR_SHOTS).data(shots));
 
                 } catch (Exception e) {
-
-                    EventBus.getDefault().post(new Bus<ArrayList<Shot>>(Config.BUS_GET_SHOTS).error(true).info(e.toString()));
+                    EventBus.getDefault().post(new Bus<ArrayList<Shot>>(Config.BUS_GET_POPULAR_SHOTS).error(true).info(e.toString()));
                     Log.d("service", "Failure on getPopularShots");
+                    e.printStackTrace();
+                }
+            }
+        }).start();
+    }
+
+
+    public void getShotDetail(final int shotID) {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+
+                try {
+                    Call<Shot> shotDetailCall = new API().service().shotDetail(shotID, Config.ACCESS_TOKEN);
+                    Shot shot = shotDetailCall.execute().body();
+
+                    Log.d("shot", "id" + shot.getId());
+                    Log.d("shot", "getTitle" + shot.getTitle());
+                    Log.d("shot", "getViewCount" + shot.getViewCount());
+                    Log.d("shot", "getUser id" + shot.getUser().getId());
+                    Log.d("shot", "getUser name" + shot.getUser().getName());
+                    Log.d("shot", "getImagesgetHidpi" + shot.getImages().getHidpi());
+                    Log.d("shot", "getImagesgetNormal" + shot.getImages().getNormal());
+                    Log.d("shot", "getImagesgetTeaser" + shot.getImages().getTeaser());
+
+                    EventBus.getDefault().post(new Bus<Shot>(Config.BUS_GET_SHOT_DETAIL).data(shot));
+
+                } catch (Exception e) {
+                    EventBus.getDefault().post(new Bus<Shot>(Config.BUS_GET_SHOT_DETAIL).error(true).info(e.toString()));
+                    Log.d("service", "Failure on getShotDetail");
                     e.printStackTrace();
                 }
             }
