@@ -19,6 +19,7 @@ public class Shot extends RealmObject {
     private String title = "";
     private String description = "";
     @SerializedName("views_count") private int viewCount = 0;
+    private boolean animated = false;
     @SerializedName("user") private User user = new User();
     @SerializedName("images") private Image images = new Image();
 
@@ -69,5 +70,13 @@ public class Shot extends RealmObject {
 
     public void setImages(Image images) {
         this.images = images;
+    }
+
+    public boolean isAnimated() {
+        return animated;
+    }
+
+    public void setAnimated(boolean animated) {
+        this.animated = animated;
     }
 }
