@@ -8,11 +8,15 @@
     </data>
 
 
-    <RelativeLayout
+    <FrameLayout
         android:id="@+id/rlRoot"
         android:layout_height="@dimen/shot_height"
         android:layout_width="fill_parent"
-        android:layout_margin="10dp" >
+        android:layout_margin="10dp"
+        android:elevation="8dp"
+        android:outlineProvider="bounds"
+        android:clipToPadding="false"
+        android:foreground="?android:attr/selectableItemBackground">
 
         <ImageView
             android:id="@+id/ivShot"
@@ -24,8 +28,8 @@
             layout="@layout/view_shot_info"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
-            bind:shot="@{shot}"/>
+            bind:shot="@{shot}"
+            android:layout_gravity="center_horizontal|bottom" />
 
-    </RelativeLayout>
+    </FrameLayout>
 </layout>
