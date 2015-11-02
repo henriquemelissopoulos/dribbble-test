@@ -14,7 +14,7 @@ import io.realm.RealmResults;
 /**
  * Created by h on 22/09/15.
  */
-public abstract class SimpleRealmAdapter<T extends RealmObject> extends BaseRealmAdapter<T> {
+public abstract class SimpleRealmAdapter<T extends RealmObject, K extends ViewDataBinding> extends BaseRealmAdapter<T> {
 
 
     public SimpleRealmAdapter(Context context, RealmResults<T> realmResults, boolean automaticUpdate) {
@@ -22,7 +22,7 @@ public abstract class SimpleRealmAdapter<T extends RealmObject> extends BaseReal
     }
 
     public abstract int layoutToInflate();
-    protected abstract void doOnBindViewHolder(ViewHolder holder, int position, T item);
+    protected abstract void doOnBindViewHolder(ViewHolder holder, K binding, int position, T item);
 
 
     @Override
@@ -34,21 +34,21 @@ public abstract class SimpleRealmAdapter<T extends RealmObject> extends BaseReal
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder h, int position) {
         ViewHolder holder = (ViewHolder) h;
-        doOnBindViewHolder(holder, position, getItem(position));
+        doOnBindViewHolder(holder, holder.getBinding(), position, getItem(position));
         holder.getBinding().executePendingBindings();
     }
 
 
     public class ViewHolder extends RecyclerView.ViewHolder {
 
-        ViewDataBinding binding;
+        K binding;
 
         public ViewHolder(View view) {
             super(view);
             binding = DataBindingUtil.bind(view);
         }
 
-        public ViewDataBinding getBinding() {
+        public K getBinding() {
             return binding;
         }
     }

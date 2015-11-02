@@ -9,17 +9,17 @@ import com.henriquemelissopoulos.dribbbletest.databinding.AdapterShotBinding;
 import com.henriquemelissopoulos.dribbbletest.model.Shot;
 import com.henriquemelissopoulos.dribbbletest.view.activity.ShotDetailActivity;
 
-import java.util.ArrayList;
+import io.realm.RealmResults;
 
 /**
  * Created by h on 31/10/15.
  */
-public class ShotAdapter extends SimpleAdapter<Shot, AdapterShotBinding> {
+public class ShotAdapter extends SimpleRealmAdapter<Shot, AdapterShotBinding> {
 
     Activity activity;
 
-    public ShotAdapter(ArrayList<Shot> data, Activity activity) {
-        super(data);
+    public ShotAdapter(Activity activity, RealmResults<Shot> data) {
+        super(activity, data, false);
         this.activity = activity;
     }
 
@@ -30,7 +30,7 @@ public class ShotAdapter extends SimpleAdapter<Shot, AdapterShotBinding> {
 
 
     @Override
-    protected void doOnBindViewHolder(SimpleAdapter.SimpleViewHolder holder, final AdapterShotBinding binding, int position, final Shot shot) {
+    protected void doOnBindViewHolder(SimpleRealmAdapter.ViewHolder holder, final AdapterShotBinding binding, int position, final Shot shot) {
         binding.setShot(shot);
 
         binding.rlRoot.setOnClickListener(new View.OnClickListener() {

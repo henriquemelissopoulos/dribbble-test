@@ -15,15 +15,17 @@ import com.henriquemelissopoulos.dribbbletest.model.Shot;
 import com.henriquemelissopoulos.dribbbletest.network.Service;
 import com.henriquemelissopoulos.dribbbletest.view.adapter.ShotAdapter;
 
-import java.util.ArrayList;
-
 import de.greenrobot.event.EventBus;
+import io.realm.Realm;
+import io.realm.RealmResults;
 
 public class MainActivity extends AppCompatActivity {
 
-    ActivityMainBinding binding;
-    ArrayList<Shot> shots = new ArrayList<>();
-    ShotAdapter shotAdapter;
+    private ActivityMainBinding binding;
+    private Realm realm;
+    private RealmResults<Shot> shots;
+    private ShotAdapter shotAdapter;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,11 +35,13 @@ public class MainActivity extends AppCompatActivity {
             EventBus.getDefault().register(this);
         }
 
+        realm = Realm.getDefaultInstance();
+
         binding = DataBindingUtil.setContentView(this, R.layout.activity_main);
 
         setSupportActionBar(binding.toolbar);
 
-        shotAdapter = new ShotAdapter(shots, this);
+        shotAdapter = new ShotAdapter(this, shots);
         binding.rvShots.setLayoutManager(new LinearLayoutManager(this));
         binding.rvShots.setAdapter(shotAdapter);
         binding.rvShots.setHasFixedSize(true);
@@ -51,25 +55,43 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        findPopularShots();
         Service.getInstance().getPopularShots(1);
-        binding.setLoading(true);
+
+        //shots not found on DB, set loading to inform user of shots request
+        if (shots == null || shots.isEmpty()) {
+            binding.setLoading(true);
+        } else {
+            init();
+        }
     }
+
+
+    public void findPopularShots() {
+        shots = realm.where(Shot.class).findAllSorted(Shot.FIELD_LIKES_COUNT, false);
+    }
+
 
     public void init() {
         shotAdapter.addDataSet(shots);
     }
 
 
-    public void onEventMainThread(Bus<ArrayList<Shot>> bus) {
+    public void onEventMainThread(Bus<Shot> bus) {
+
+        shotAdapter.notifyDataSetChanged();
 
         if (bus.key == Config.BUS_GET_POPULAR_SHOTS) {
 
             if (bus.error) {
-                Toast.makeText(this, R.string.general_error_message + bus.info, Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, R.string.general_error_message, Toast.LENGTH_SHORT).show();
                 return;
             }
 
-            shots = bus.data;
+            findPopularShots();
+            if (shots == null || shots.isEmpty()) {
+                Toast.makeText(this, R.string.general_error_message, Toast.LENGTH_SHORT).show();
+            }
 
             binding.setLoading(false);
             init();
@@ -80,6 +102,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        if (realm != null) realm.close();
         EventBus.getDefault().unregister(this);
     }
 }

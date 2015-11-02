@@ -9,6 +9,7 @@ import com.henriquemelissopoulos.dribbbletest.model.Shot;
 import java.util.ArrayList;
 
 import de.greenrobot.event.EventBus;
+import io.realm.Realm;
 import retrofit.Call;
 
 /**
@@ -31,28 +32,25 @@ public class Service {
             @Override
             public void run() {
 
+                Realm realm = null;
+
                 try {
                     Call<ArrayList<Shot>> shotsCall = new API().service().shots(Config.ACCESS_TOKEN, page);
                     ArrayList<Shot> shots = shotsCall.execute().body();
 
-//                    for (Shot shot : shots) {
-//                        Log.d("shot", "id" + shot.getId());
-//                        Log.d("shot", "getTitle" + shot.getTitle());
-//                        Log.d("shot", "getViewCount" + shot.getViewCount());
-//                        Log.d("shot", "getUser id" + shot.getUser().getId());
-//                        Log.d("shot", "getUser name" + shot.getUser().getName());
-//                        Log.d("shot", "getImagesgetHidpi" + shot.getImages().getHidpi());
-//                        Log.d("shot", "getImagesgetNormal" + shot.getImages().getNormal());
-//                        Log.d("shot", "getImagesgetTeaser" + shot.getImages().getTeaser());
-//                        Log.d("shot", "- + \n");
-//                    }
+                    realm = Realm.getDefaultInstance();
+                    realm.beginTransaction();
+                    realm.copyToRealmOrUpdate(shots);
+                    realm.commitTransaction();
 
-                    EventBus.getDefault().post(new Bus<ArrayList<Shot>>(Config.BUS_GET_POPULAR_SHOTS).data(shots));
+                    EventBus.getDefault().post(new Bus<Shot>(Config.BUS_GET_POPULAR_SHOTS));
 
                 } catch (Exception e) {
-                    EventBus.getDefault().post(new Bus<ArrayList<Shot>>(Config.BUS_GET_POPULAR_SHOTS).error(true).info(e.toString()));
+                    EventBus.getDefault().post(new Bus<Shot>(Config.BUS_GET_POPULAR_SHOTS).error(true).info(e.toString()));
                     Log.d("service", "Failure on getPopularShots");
                     e.printStackTrace();
+                } finally {
+                    if (realm != null) realm.close();
                 }
             }
         }).start();
@@ -64,25 +62,25 @@ public class Service {
             @Override
             public void run() {
 
+                Realm realm = null;
+
                 try {
                     Call<Shot> shotDetailCall = new API().service().shotDetail(shotID, Config.ACCESS_TOKEN);
                     Shot shot = shotDetailCall.execute().body();
 
-                    Log.d("shot", "id" + shot.getId());
-                    Log.d("shot", "getTitle" + shot.getTitle());
-                    Log.d("shot", "getViewCount" + shot.getViewCount());
-                    Log.d("shot", "getUser id" + shot.getUser().getId());
-                    Log.d("shot", "getUser name" + shot.getUser().getName());
-                    Log.d("shot", "getImagesgetHidpi" + shot.getImages().getHidpi());
-                    Log.d("shot", "getImagesgetNormal" + shot.getImages().getNormal());
-                    Log.d("shot", "getImagesgetTeaser" + shot.getImages().getTeaser());
+                    realm = Realm.getDefaultInstance();
+                    realm.beginTransaction();
+                    realm.copyToRealmOrUpdate(shot);
+                    realm.commitTransaction();
 
-                    EventBus.getDefault().post(new Bus<Shot>(Config.BUS_GET_SHOT_DETAIL).data(shot));
+                    EventBus.getDefault().post(new Bus<Shot>(Config.BUS_GET_SHOT_DETAIL));
 
                 } catch (Exception e) {
                     EventBus.getDefault().post(new Bus<Shot>(Config.BUS_GET_SHOT_DETAIL).error(true).info(e.toString()));
                     Log.d("service", "Failure on getShotDetail");
                     e.printStackTrace();
+                } finally {
+                    if (realm != null) realm.close();
                 }
             }
         }).start();

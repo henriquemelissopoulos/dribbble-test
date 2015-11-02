@@ -146,10 +146,10 @@ public class ShotDetailActivity extends AppCompatActivity {
     public void init() {
 
         binding.setShot(shot);
-
+        
         Glide.with(this)
                 .load(shot.getImages().getHidpi())
-                .thumbnail(Glide.with(this).load(shot.getImages().getNormal()).centerCrop())
+                .thumbnail(Glide.with(this).load(shot.getImages().getNormal()).centerCrop().dontAnimate())
                 .diskCacheStrategy(DiskCacheStrategy.SOURCE)
                 .dontAnimate()
                 .centerCrop()
@@ -204,7 +204,7 @@ public class ShotDetailActivity extends AppCompatActivity {
                 binding.setLoading(false);
             }
 
-            shot = bus.data;
+            findShot();
             if (shot == null) {
                 invalidShot();
                 return;

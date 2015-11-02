@@ -14,11 +14,13 @@ import io.realm.annotations.RealmClass;
 public class Shot extends RealmObject {
 
     public static final String FIELD_SHOT_ID = "id";
+    public static final String FIELD_LIKES_COUNT = "likesCount";
 
     @PrimaryKey private int id;
     private String title = "";
     private String description = "";
     @SerializedName("views_count") private int viewCount = 0;
+    @SerializedName("likes_count") private int likesCount = 0;
     private boolean animated = false;
     @SerializedName("html_url") private String url = "";
     @SerializedName("user") private User user = new User();
@@ -87,5 +89,13 @@ public class Shot extends RealmObject {
 
     public void setUrl(String url) {
         this.url = url;
+    }
+
+    public int getLikesCount() {
+        return likesCount;
+    }
+
+    public void setLikesCount(int likesCount) {
+        this.likesCount = likesCount;
     }
 }
