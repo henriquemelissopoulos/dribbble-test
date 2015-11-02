@@ -20,6 +20,7 @@ public class Shot extends RealmObject {
     private String description = "";
     @SerializedName("views_count") private int viewCount = 0;
     private boolean animated = false;
+    @SerializedName("html_url") private String url = "";
     @SerializedName("user") private User user = new User();
     @SerializedName("images") private Image images = new Image();
 
@@ -78,5 +79,13 @@ public class Shot extends RealmObject {
 
     public void setAnimated(boolean animated) {
         this.animated = animated;
+    }
+
+    public String getUrl() {
+        return url;
+    }
+
+    public void setUrl(String url) {
+        this.url = url;
     }
 }

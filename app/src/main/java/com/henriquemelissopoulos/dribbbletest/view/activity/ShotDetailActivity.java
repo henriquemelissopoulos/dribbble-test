@@ -7,6 +7,8 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.text.method.LinkMovementMethod;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
@@ -179,9 +181,8 @@ public class ShotDetailActivity extends AppCompatActivity {
         if (bus.key == Config.BUS_GET_SHOT_DETAIL) {
 
             if (bus.error) {
-                Toast.makeText(this, R.string.general_error_message + bus.info, Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, R.string.general_error_message, Toast.LENGTH_SHORT).show();
                 binding.setLoading(false);
-                return;
             }
 
             shot = bus.data;
@@ -196,11 +197,36 @@ public class ShotDetailActivity extends AppCompatActivity {
     }
 
 
+    public void share() {
+        if (shot != null) {
+            Intent intent = new Intent(Intent.ACTION_SEND);
+            intent.setType("text/plain");
+            intent.putExtra(Intent.EXTRA_TITLE, shot.getTitle());
+            String message = shot.getUser().getName() + " - " + shot.getTitle() + "\n\n" + shot.getUrl();
+            intent.putExtra(Intent.EXTRA_TEXT, message);
+
+            startActivity(Intent.createChooser(intent, getString(R.string.activity_shot_detail_share_dialog)));
+        }
+    }
+
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.menu_shot_detail, menu);
+        return true;
+    }
+
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
                 onBackPressed();
+                return true;
+
+            case R.id.action_share:
+                share();
                 return true;
         }
 
