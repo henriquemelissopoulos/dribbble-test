@@ -4,6 +4,9 @@
     <color name="colorPrimaryDark">#303F9F</color>
     <color name="colorAccent">#FF4081</color>
 
+    <color name="background">#FAFAFA</color>
+    <color name="text_light">#757575</color>
+
 
     <!-- GENERAL -->
     <color name="white">#FFFFFF</color>

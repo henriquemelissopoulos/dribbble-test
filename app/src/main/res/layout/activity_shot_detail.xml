@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:bind="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools" >
+
+    <data>
+        <import type="android.text.Html"/>
+        <import type="android.view.View"/>
+        <variable name="loading" type="boolean"/>
+        <variable name="shot" type="com.henriquemelissopoulos.dribbbletest.model.Shot"/>
+    </data>
+
+    <RelativeLayout
+        android:id="@+id/rlRoot"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/background">
+
+        <ImageView
+            android:id="@+id/ivShot"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/shot_height"
+            android:background="@color/black_50"/>
+
+        <View
+            android:id="@+id/gradient"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/shot_height"
+            android:background="@drawable/gradient_overlay" />
+
+        <com.github.ksoichiro.android.observablescrollview.ObservableScrollView
+            android:id="@+id/obScrollView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:overScrollMode="never"
+            android:scrollbars="none" >
+
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingTop="@dimen/shot_height" >
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:paddingTop="26dp"
+                    android:paddingLeft="10dp"
+                    android:paddingStart="10dp"
+                    android:paddingRight="10dp"
+                    android:paddingEnd="10dp"
+                    android:paddingBottom="26dp"
+                    android:background="@color/background" >
+
+                    <RelativeLayout
+                        android:id="@+id/rlUserInfo"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content" >
+
+                        <ImageView
+                            android:id="@+id/ivAvatar"
+                            android:layout_width="50dp"
+                            android:layout_height="50dp"
+                            tools:src="@drawable/ic_visibility_white_24dp"
+                            tools:background="@color/black_50"
+                            android:layout_centerVertical="true"
+                            android:layout_marginRight="15dp"
+                            android:layout_marginEnd="15dp" />
+
+                        <TextView
+                            android:id="@+id/tvName"
+                            style="@style/ShotLabel"
+                            android:textColor="@color/text_light"
+                            tools:text="My Name"
+                            android:text="@{shot.user.name}"
+                            android:layout_centerVertical="true"
+                            android:layout_toRightOf="@+id/ivAvatar"
+                            android:layout_toEndOf="@+id/ivAvatar" />
+
+                    </RelativeLayout>
+
+                    <TextView
+                        android:id="@+id/tvDescription"
+                        android:linksClickable="true"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="sans-serif-condensed"
+                        tools:text="@string/lorem_test"
+                        android:text='@{Html.fromHtml(shot.description ?? "")}'
+                        android:textSize="16sp"
+                        android:layout_marginTop="26dp"
+                        android:layout_below="@+id/rlUserInfo"/>
+
+                    <android.support.v4.widget.ContentLoadingProgressBar
+                        android:id="@+id/pbLoading"
+                        style="?android:attr/progressBarStyleLarge"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_horizontal"
+                        android:layout_centerHorizontal="true"
+                        android:visibility="@{loading ? View.VISIBLE : View.GONE}"/>
+
+                </RelativeLayout>
+
+            </FrameLayout>
+
+        </com.github.ksoichiro.android.observablescrollview.ObservableScrollView>
+
+        <View
+            android:id="@+id/overlay"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/shot_height"/>
+
+        <RelativeLayout
+            android:id="@+id/rlInfo"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignBottom="@+id/ivShot" >
+
+            <include layout="@layout/view_shot_info"
+                android:id="@+id/info"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                bind:shot="@{shot}" />
+
+        </RelativeLayout>
+
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/transparent"
+            android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+            android:title="@{shot.title ?? @string/general_loading_message}"
+            android:fitsSystemWindows="true" />
+
+    </RelativeLayout>
+</layout>

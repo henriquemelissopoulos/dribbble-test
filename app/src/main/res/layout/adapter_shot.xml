@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools">
+    xmlns:bind="http://schemas.android.com/apk/res-auto">
 
     <data>
         <variable name="shot" type="com.henriquemelissopoulos.dribbbletest.model.Shot"/>
@@ -9,8 +9,8 @@
 
 
     <RelativeLayout
-        android:id="@+id/ivRoot"
-        android:layout_height="300dp"
+        android:id="@+id/rlRoot"
+        android:layout_height="@dimen/shot_height"
         android:layout_width="fill_parent"
         android:layout_margin="10dp" >
 
@@ -20,43 +20,12 @@
             android:layout_height="match_parent"
             android:background="@color/black_50" />
 
-        <RelativeLayout
-            android:id="@+id/rlInfo"
-            android:layout_alignParentBottom="true"
+        <include android:id="@+id/info"
+            layout="@layout/view_shot_info"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:padding="12dp"
-            android:background="@color/black_50" >
+            android:layout_alignParentBottom="true"
+            bind:shot="@{shot}"/>
 
-            <TextView
-                android:id="@+id/tvTitle"
-                android:layout_width="fill_parent"
-                style="@style/ShotLabel"
-                tools:text="End of a era"
-                android:layout_toLeftOf="@+id/ivViewCount"
-                android:text="@{shot.title}" />
-
-            <ImageView
-                android:id="@+id/ivViewCount"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:src="@drawable/ic_visibility_white_24dp"
-                android:layout_centerInParent="true"
-                android:layout_marginLeft="10dp"
-                android:layout_marginStart="10dp"
-                android:layout_marginRight="5dp"
-                android:layout_marginEnd="5dp"
-                android:layout_toLeftOf="@+id/tvViewCount"
-                android:layout_toStartOf="@+id/tvViewCount" />
-
-            <TextView
-                android:id="@+id/tvViewCount"
-                android:layout_alignParentRight="true"
-                android:layout_alignParentEnd="true"
-                style="@style/ShotLabel"
-                tools:text="45"
-                android:text="@{String.valueOf(shot.viewCount)}"/>
-
-        </RelativeLayout>
     </RelativeLayout>
 </layout>

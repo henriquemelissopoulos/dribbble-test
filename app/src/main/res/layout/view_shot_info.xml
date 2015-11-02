@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+        <variable name="shot" type="com.henriquemelissopoulos.dribbbletest.model.Shot"/>
+    </data>
+
+    <RelativeLayout
+        android:id="@+id/rlInfo"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="12dp"
+        android:background="@color/black_50" >
+
+        <ImageView
+            android:id="@+id/ivShotType"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            tools:src="@drawable/ic_image_white_24dp"
+            android:src="@{shot.animated ? @drawable/ic_movie_white_24dp : @drawable/ic_image_white_24dp}"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="5dp"
+            android:layout_marginEnd="5dp"
+             />
+
+        <TextView
+            android:id="@+id/tvTitle"
+            android:layout_width="fill_parent"
+            style="@style/ShotLabel"
+            tools:text="End of a era"
+            android:layout_toLeftOf="@+id/ivViewCount"
+            android:layout_toStartOf="@+id/ivViewCount"
+            android:text="@{shot.title}"
+            android:layout_centerVertical="true"
+            android:layout_toRightOf="@+id/ivShotType"
+            android:layout_toEndOf="@+id/ivShotType"/>
+
+        <ImageView
+            android:id="@+id/ivViewCount"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_visibility_white_24dp"
+            android:layout_centerInParent="true"
+            android:layout_marginLeft="10dp"
+            android:layout_marginStart="10dp"
+            android:layout_marginRight="5dp"
+            android:layout_marginEnd="5dp"
+            android:layout_toLeftOf="@+id/tvViewCount"
+            android:layout_toStartOf="@+id/tvViewCount" />
+
+        <TextView
+            android:id="@+id/tvViewCount"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true"
+            style="@style/ShotLabel"
+            tools:text="45"
+            android:text="@{String.valueOf(shot.viewCount)}"/>
+
+    </RelativeLayout>
+</layout>
