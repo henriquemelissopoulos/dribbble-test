@@ -21,7 +21,22 @@
             android:id="@+id/ivShot"
             android:layout_width="match_parent"
             android:layout_height="@dimen/shot_height"
-            android:background="@color/black_50"/>
+            android:background="@color/black_50"
+            android:scaleType="centerCrop" />
+
+        <RelativeLayout
+            android:id="@+id/rlInfo"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignBottom="@+id/ivShot" >
+
+            <include layout="@layout/view_shot_info"
+                android:id="@+id/info"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                bind:shot="@{shot}" />
+
+        </RelativeLayout>
 
         <View
             android:id="@+id/gradient"
@@ -111,20 +126,6 @@
             android:id="@+id/overlay"
             android:layout_width="match_parent"
             android:layout_height="@dimen/shot_height"/>
-
-        <RelativeLayout
-            android:id="@+id/rlInfo"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_alignBottom="@+id/ivShot" >
-
-            <include layout="@layout/view_shot_info"
-                android:id="@+id/info"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                bind:shot="@{shot}" />
-
-        </RelativeLayout>
 
         <android.support.v7.widget.Toolbar
             android:id="@+id/toolbar"

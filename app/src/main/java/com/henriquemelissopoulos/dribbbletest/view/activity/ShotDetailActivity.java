@@ -1,10 +1,15 @@
 package com.henriquemelissopoulos.dribbbletest.view.activity;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.databinding.DataBindingUtil;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.ActivityOptionsCompat;
+import android.support.v4.util.Pair;
+import android.support.v4.view.ViewCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.text.method.LinkMovementMethod;
 import android.view.Menu;
@@ -51,10 +56,24 @@ public class ShotDetailActivity extends AppCompatActivity {
         return intent;
     }
 
+    public static final String SHOT_IMAGE = "shotImage";
+    public static final String SHOT_INFO = "shotInfo";
+    public static void startWithTransition(Activity activity, int shotID, View ivShot, View rlInfo) {
+        Pair<View, String> shotImage = new Pair<>(ivShot, SHOT_IMAGE);
+        Pair<View, String> shotInfo = new Pair<>(rlInfo, SHOT_INFO);
+        ActivityOptionsCompat options = ActivityOptionsCompat.makeSceneTransitionAnimation(activity, shotImage, shotInfo);
+        ActivityCompat.startActivity(activity, startIntent(activity, shotID), options.toBundle());
+    }
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        binding = DataBindingUtil.setContentView(this, R.layout.activity_shot_detail);
+
+        ViewCompat.setTransitionName(binding.ivShot, SHOT_IMAGE);
+        ViewCompat.setTransitionName(binding.rlInfo, SHOT_INFO);
 
         shotID = getIntent().getIntExtra(SHOT_ID, -1);
         if (shotID < 0) {
@@ -74,7 +93,6 @@ public class ShotDetailActivity extends AppCompatActivity {
             getWindow().setStatusBarColor(getResources().getColor(R.color.transparent));
         }
 
-        binding = DataBindingUtil.setContentView(this, R.layout.activity_shot_detail);
 
         setSupportActionBar(binding.toolbar);
         if (getSupportActionBar() != null) getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -133,6 +151,7 @@ public class ShotDetailActivity extends AppCompatActivity {
                 .load(shot.getImages().getHidpi())
                 .thumbnail(Glide.with(this).load(shot.getImages().getNormal()).centerCrop())
                 .diskCacheStrategy(DiskCacheStrategy.SOURCE)
+                .dontAnimate()
                 .centerCrop()
                 .into(binding.ivShot);
 
@@ -240,5 +259,4 @@ public class ShotDetailActivity extends AppCompatActivity {
         if (realm != null) realm.close();
         EventBus.getDefault().unregister(this);
     }
-
 }
