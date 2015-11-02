@@ -1,6 +1,6 @@
 package com.henriquemelissopoulos.dribbbletest.view.adapter;
 
-import android.content.Context;
+import android.app.Activity;
 import android.view.View;
 
 import com.bumptech.glide.Glide;
@@ -16,11 +16,11 @@ import java.util.ArrayList;
  */
 public class ShotAdapter extends SimpleAdapter<Shot, AdapterShotBinding> {
 
-    Context context;
+    Activity activity;
 
-    public ShotAdapter(ArrayList<Shot> data, Context context) {
+    public ShotAdapter(ArrayList<Shot> data, Activity activity) {
         super(data);
-        this.context = context;
+        this.activity = activity;
     }
 
     @Override
@@ -30,19 +30,20 @@ public class ShotAdapter extends SimpleAdapter<Shot, AdapterShotBinding> {
 
 
     @Override
-    protected void doOnBindViewHolder(SimpleAdapter.SimpleViewHolder holder, AdapterShotBinding binding, int position, final Shot shot) {
+    protected void doOnBindViewHolder(SimpleAdapter.SimpleViewHolder holder, final AdapterShotBinding binding, int position, final Shot shot) {
         binding.setShot(shot);
 
         binding.rlRoot.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                context.startActivity(ShotDetailActivity.startIntent(context, shot.getId()));
+                ShotDetailActivity.startWithTransition(activity, shot.getId(), binding.ivShot, binding.rlInfo);
             }
         });
 
-        Glide.with(context)
+        Glide.with(activity)
                 .load(shot.getImages().getNormal())
-                .thumbnail(Glide.with(context).load(shot.getImages().getTeaser()).centerCrop())
+                .thumbnail(Glide.with(activity).load(shot.getImages().getTeaser()).centerCrop())
+                .dontAnimate()
                 .centerCrop()
                 .into(binding.ivShot);
     }

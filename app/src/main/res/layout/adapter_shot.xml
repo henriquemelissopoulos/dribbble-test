@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:bind="http://schemas.android.com/apk/res-auto">
+    xmlns:bind="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
 
     <data>
         <variable name="shot" type="com.henriquemelissopoulos.dribbbletest.model.Shot"/>
@@ -14,22 +15,30 @@
         android:layout_width="fill_parent"
         android:layout_margin="10dp"
         android:elevation="8dp"
-        android:outlineProvider="bounds"
         android:clipToPadding="false"
+        android:outlineProvider="bounds"
         android:foreground="?android:attr/selectableItemBackground">
 
         <ImageView
             android:id="@+id/ivShot"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="@color/black_50" />
+            android:background="@color/black_50"
+            android:scaleType="centerCrop"/>
 
-        <include android:id="@+id/info"
-            layout="@layout/view_shot_info"
+        <RelativeLayout
+            android:id="@+id/rlInfo"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            bind:shot="@{shot}"
-            android:layout_gravity="center_horizontal|bottom" />
+            android:layout_gravity="center_horizontal|bottom" >
+
+            <include android:id="@+id/info"
+                layout="@layout/view_shot_info"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                bind:shot="@{shot}"/>
+
+        </RelativeLayout>
 
     </FrameLayout>
 </layout>
