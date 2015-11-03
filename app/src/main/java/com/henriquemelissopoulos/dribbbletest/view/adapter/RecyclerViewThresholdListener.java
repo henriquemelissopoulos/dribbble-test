@@ -8,7 +8,7 @@ import com.henriquemelissopoulos.dribbbletest.controller.Config;
 /**
  * Created by h on 02/11/15.
  */
-public abstract class RecyclerViewtThreasholdListener extends RecyclerView.OnScrollListener {
+public abstract class RecyclerViewThresholdListener extends RecyclerView.OnScrollListener {
 
     private int previousTotal = 0;
     private boolean loading = true;
@@ -17,7 +17,7 @@ public abstract class RecyclerViewtThreasholdListener extends RecyclerView.OnScr
 
     public abstract void onVisibleThreshold();
 
-    public RecyclerViewtThreasholdListener(LinearLayoutManager linearLayoutManager) {
+    public RecyclerViewThresholdListener(LinearLayoutManager linearLayoutManager) {
         this.linearLayoutManager = linearLayoutManager;
     }
 

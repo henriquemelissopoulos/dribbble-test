@@ -14,7 +14,7 @@ import com.henriquemelissopoulos.dribbbletest.controller.Utils;
 import com.henriquemelissopoulos.dribbbletest.databinding.ActivityMainBinding;
 import com.henriquemelissopoulos.dribbbletest.model.Shot;
 import com.henriquemelissopoulos.dribbbletest.network.Service;
-import com.henriquemelissopoulos.dribbbletest.view.adapter.RecyclerViewtThreasholdListener;
+import com.henriquemelissopoulos.dribbbletest.view.adapter.RecyclerViewThresholdListener;
 import com.henriquemelissopoulos.dribbbletest.view.adapter.ShotAdapter;
 
 import de.greenrobot.event.EventBus;
@@ -27,7 +27,7 @@ public class MainActivity extends AppCompatActivity {
     private Realm realm;
     private RealmResults<Shot> shots;
     private ShotAdapter shotAdapter;
-    private RecyclerViewtThreasholdListener threasholdListener;
+    private RecyclerViewThresholdListener thresholdListener;
 
 
     @Override
@@ -48,13 +48,13 @@ public class MainActivity extends AppCompatActivity {
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
         binding.rvShots.setLayoutManager(linearLayoutManager);
         binding.rvShots.setAdapter(shotAdapter);
-        threasholdListener = new RecyclerViewtThreasholdListener(linearLayoutManager) {
+        thresholdListener = new RecyclerViewThresholdListener(linearLayoutManager) {
 
             @Override public void onVisibleThreshold() {
                 Service.getInstance().getPopularShots(Utils.pageToRequest(shots));
             }
         };
-        binding.rvShots.addOnScrollListener(threasholdListener);
+        binding.rvShots.addOnScrollListener(thresholdListener);
 
                 binding.swipeRefresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
                     @Override
@@ -62,7 +62,7 @@ public class MainActivity extends AppCompatActivity {
                         realm.beginTransaction();
                         realm.clear(Shot.class);
                         realm.commitTransaction();
-                        threasholdListener.reset();
+                        thresholdListener.reset();
                         shotAdapter.notifyDataSetChanged();
                         Service.getInstance().getPopularShots(1);
                     }
