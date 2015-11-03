@@ -57,6 +57,7 @@ public class MainActivity extends AppCompatActivity {
 
             @Override public void onVisibleThreshold() {
                 Service.getInstance().getPopularShots(Utils.pageToRequest(shots));
+                binding.swipeRefresh.setRefreshing(true);
             }
         };
         binding.rvShots.addOnScrollListener(thresholdListener);
