@@ -2,6 +2,7 @@ package com.henriquemelissopoulos.dribbbletest.view.activity;
 
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.widget.Toast;
@@ -25,6 +26,7 @@ public class MainActivity extends AppCompatActivity {
     private Realm realm;
     private RealmResults<Shot> shots;
     private ShotAdapter shotAdapter;
+    private RecyclerViewtThreasholdListener threasholdListener;
 
 
     @Override
@@ -45,15 +47,27 @@ public class MainActivity extends AppCompatActivity {
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
         binding.rvShots.setLayoutManager(linearLayoutManager);
         binding.rvShots.setAdapter(shotAdapter);
-        binding.rvShots.addOnScrollListener(new RecyclerViewtThreasholdListener(linearLayoutManager) {
+        threasholdListener = new RecyclerViewtThreasholdListener(linearLayoutManager) {
 
-            @Override
-            public void onVisibleThreshold() {
+            @Override public void onVisibleThreshold() {
                 int page = 0;
                 if (shots != null) page = (shots.size() / Config.SHOTS_PER_PAGE) + 1;
                 Service.getInstance().getPopularShots(page);
             }
-        });
+        };
+        binding.rvShots.addOnScrollListener(threasholdListener);
+
+                binding.swipeRefresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+                    @Override
+                    public void onRefresh() {
+                        realm.beginTransaction();
+                        realm.clear(Shot.class);
+                        realm.commitTransaction();
+                        threasholdListener.reset();
+                        shotAdapter.notifyDataSetChanged();
+                        Service.getInstance().getPopularShots(1);
+                    }
+                });
 
         findPopularShots();
         Service.getInstance().getPopularShots(1);
@@ -82,6 +96,8 @@ public class MainActivity extends AppCompatActivity {
         shotAdapter.notifyDataSetChanged();
 
         if (bus.key == Config.BUS_GET_POPULAR_SHOTS) {
+
+            if (binding.swipeRefresh.isRefreshing()) binding.swipeRefresh.setRefreshing(false);
 
             if (bus.error) {
                 Toast.makeText(this, R.string.general_error_message, Toast.LENGTH_SHORT).show();

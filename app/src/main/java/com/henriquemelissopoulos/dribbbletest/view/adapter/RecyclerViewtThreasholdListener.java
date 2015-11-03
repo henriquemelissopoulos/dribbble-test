@@ -12,13 +12,13 @@ public abstract class RecyclerViewtThreasholdListener extends RecyclerView.OnScr
 
     private int previousTotal = 0;
     private boolean loading = true;
-    int firstVisibleItem, visibleItemCount, totalItemCount;
-    private LinearLayoutManager mLinearLayoutManager;
+    private int firstVisibleItem, visibleItemCount, totalItemCount;
+    private LinearLayoutManager linearLayoutManager;
 
     public abstract void onVisibleThreshold();
 
     public RecyclerViewtThreasholdListener(LinearLayoutManager linearLayoutManager) {
-        this.mLinearLayoutManager = linearLayoutManager;
+        this.linearLayoutManager = linearLayoutManager;
     }
 
     @Override
@@ -26,8 +26,8 @@ public abstract class RecyclerViewtThreasholdListener extends RecyclerView.OnScr
         super.onScrolled(recyclerView, dx, dy);
 
         visibleItemCount = recyclerView.getChildCount();
-        totalItemCount = mLinearLayoutManager.getItemCount();
-        firstVisibleItem = mLinearLayoutManager.findFirstVisibleItemPosition();
+        totalItemCount = linearLayoutManager.getItemCount();
+        firstVisibleItem = linearLayoutManager.findFirstVisibleItemPosition();
 
         if (loading) {
             if (totalItemCount > previousTotal) {
@@ -40,5 +40,9 @@ public abstract class RecyclerViewtThreasholdListener extends RecyclerView.OnScr
             onVisibleThreshold();
             loading = true;
         }
+    }
+
+    public void reset() {
+        previousTotal = 0;
     }
 }
