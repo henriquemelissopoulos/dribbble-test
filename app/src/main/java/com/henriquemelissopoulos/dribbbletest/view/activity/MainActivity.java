@@ -1,19 +1,25 @@
 package com.henriquemelissopoulos.dribbbletest.view.activity;
 
+import android.content.Intent;
 import android.databinding.DataBindingUtil;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.widget.Toast;
 
 import com.henriquemelissopoulos.dribbbletest.R;
 import com.henriquemelissopoulos.dribbbletest.controller.Bus;
 import com.henriquemelissopoulos.dribbbletest.controller.Config;
+import com.henriquemelissopoulos.dribbbletest.controller.Utils;
 import com.henriquemelissopoulos.dribbbletest.databinding.ActivityMainBinding;
 import com.henriquemelissopoulos.dribbbletest.model.Shot;
 import com.henriquemelissopoulos.dribbbletest.network.Service;
-import com.henriquemelissopoulos.dribbbletest.view.adapter.RecyclerViewtThreasholdListener;
+import com.henriquemelissopoulos.dribbbletest.view.adapter.RecyclerViewThresholdListener;
 import com.henriquemelissopoulos.dribbbletest.view.adapter.ShotAdapter;
 
 import de.greenrobot.event.EventBus;
@@ -26,7 +32,7 @@ public class MainActivity extends AppCompatActivity {
     private Realm realm;
     private RealmResults<Shot> shots;
     private ShotAdapter shotAdapter;
-    private RecyclerViewtThreasholdListener threasholdListener;
+    private RecyclerViewThresholdListener thresholdListener;
 
 
     @Override
@@ -47,15 +53,14 @@ public class MainActivity extends AppCompatActivity {
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
         binding.rvShots.setLayoutManager(linearLayoutManager);
         binding.rvShots.setAdapter(shotAdapter);
-        threasholdListener = new RecyclerViewtThreasholdListener(linearLayoutManager) {
+        thresholdListener = new RecyclerViewThresholdListener(linearLayoutManager) {
 
             @Override public void onVisibleThreshold() {
-                int page = 0;
-                if (shots != null) page = (shots.size() / Config.SHOTS_PER_PAGE) + 1;
-                Service.getInstance().getPopularShots(page);
+                Service.getInstance().getPopularShots(Utils.pageToRequest(shots));
+                binding.swipeRefresh.setRefreshing(true);
             }
         };
-        binding.rvShots.addOnScrollListener(threasholdListener);
+        binding.rvShots.addOnScrollListener(thresholdListener);
 
                 binding.swipeRefresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
                     @Override
@@ -63,7 +68,7 @@ public class MainActivity extends AppCompatActivity {
                         realm.beginTransaction();
                         realm.clear(Shot.class);
                         realm.commitTransaction();
-                        threasholdListener.reset();
+                        thresholdListener.reset();
                         shotAdapter.notifyDataSetChanged();
                         Service.getInstance().getPopularShots(1);
                     }
@@ -82,7 +87,7 @@ public class MainActivity extends AppCompatActivity {
 
 
     public void findPopularShots() {
-        shots = realm.where(Shot.class).findAllSorted(Shot.FIELD_LIKES_COUNT, false);
+        shots = realm.where(Shot.class).findAll();
     }
 
 
@@ -112,6 +117,27 @@ public class MainActivity extends AppCompatActivity {
             binding.setLoading(false);
             init();
         }
+    }
+
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.menu_main, menu);
+        return true;
+    }
+
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.action_github:
+                Uri uri = Uri.parse(getResources().getString(R.string.github_url));
+                Intent intent = new Intent(Intent.ACTION_VIEW, uri);
+                startActivity(intent);
+                return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 
 

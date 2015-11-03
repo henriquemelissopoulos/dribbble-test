@@ -12,6 +12,10 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme" >
 
+        <meta-data
+            android:name="io.fabric.ApiKey"
+            android:value="aab50ef6da7d1496d643eadbdb0b5ad6415369a8" />
+
         <activity
             android:name=".view.activity.MainActivity"
             android:configChanges="orientation|screenSize"

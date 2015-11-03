@@ -4,6 +4,12 @@
     <string name="general_loading_message">Carregando...</string>
     <string name="general_error_message">Ocorreu um erro, por favor tente novamente mais tarde.</string>
     <string name="lorem_test"><b>Mattis bibendum</b> ultrices magna Proin viverra mollis Aliquam mus faucibus rutrum dictum mattis malesuada. Ligula velit nascetur dignissim Suspendisse Etiam lobortis mi purus ante elementum Vivamus. Magna volutpat mus facilisis tellus erat tempor sagittis Lorem Praesent sapien Quisque Quisque. Fermentum ante finibus Aliquam malesuada habitant augue ligula at Aenean magna Sed tempor. A lorem semper Aliquam Maecenas vulputate ligula morbi sit iaculis molestie lobortis. \n\n Mattis bibendum ultrices magna Proin viverra mollis Aliquam mus faucibus rutrum dictum mattis malesuada. Ligula velit nascetur dignissim Suspendisse Etiam lobortis mi purus ante elementum Vivamus. Magna volutpat mus facilisis tellus erat tempor sagittis Lorem Praesent sapien Quisque Quisque. Fermentum ante finibus Aliquam malesuada habitant augue ligula at Aenean magna Sed tempor. A lorem semper Aliquam Maecenas vulputate ligula morbi sit iaculis molestie lobortis. \n\n Mattis bibendum ultrices magna Proin viverra mollis Aliquam mus faucibus rutrum dictum mattis malesuada. Ligula velit nascetur dignissim Suspendisse Etiam lobortis mi purus ante elementum Vivamus. Magna volutpat mus facilisis tellus erat tempor sagittis Lorem Praesent sapien Quisque Quisque. Fermentum ante finibus Aliquam malesuada habitant augue ligula at Aenean magna Sed tempor. A lorem semper Aliquam Maecenas vulputate ligula morbi sit iaculis molestie lobortis. \n\n Mattis bibendum ultrices magna Proin viverra mollis Aliquam mus faucibus rutrum dictum mattis malesuada. Ligula velit nascetur dignissim Suspendisse Etiam lobortis mi purus ante elementum Vivamus. Magna volutpat mus facilisis tellus erat tempor sagittis Lorem Praesent sapien Quisque Quisque. Fermentum ante finibus Aliquam malesuada habitant augue ligula at Aenean magna Sed tempor. A lorem semper Aliquam Maecenas vulputate ligula morbi sit iaculis molestie lobortis.</string>
+    <string name="github_url">https://github.com/henriquemelissopoulos/dribbble-test</string>
+
+
+    <!-- Popular Shots Activity  -->
+    <string name="activity_popular_shot_menu_github">GitHub</string>
+
 
     <!-- Shot Detail Activity -->
     <string name="activity_shot_detail_menu_share">Compartilhar</string>
