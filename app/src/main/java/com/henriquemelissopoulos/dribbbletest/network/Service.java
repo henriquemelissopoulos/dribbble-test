@@ -35,7 +35,7 @@ public class Service {
                 Realm realm = null;
 
                 try {
-                    Call<ArrayList<Shot>> shotsCall = new API().service().shots(Config.ACCESS_TOKEN, page);
+                    Call<ArrayList<Shot>> shotsCall = new API().service().shots(Config.ACCESS_TOKEN, page, Config.SHOTS_PER_PAGE);
                     ArrayList<Shot> shots = shotsCall.execute().body();
 
                     realm = Realm.getDefaultInstance();

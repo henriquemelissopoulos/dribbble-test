@@ -102,7 +102,8 @@ public class API {
         @GET("shots/")
         Call<ArrayList<Shot>> shots(
                 @Query("access_token") String token,
-                @Query("page") int page);
+                @Query("page") int page,
+                @Query("per_page") int shotsPerPage);
 
 
         //Details of a shot

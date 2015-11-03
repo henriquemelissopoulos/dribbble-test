@@ -4,7 +4,6 @@ import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
-import android.view.View;
 import android.widget.Toast;
 
 import com.henriquemelissopoulos.dribbbletest.R;
@@ -13,6 +12,7 @@ import com.henriquemelissopoulos.dribbbletest.controller.Config;
 import com.henriquemelissopoulos.dribbbletest.databinding.ActivityMainBinding;
 import com.henriquemelissopoulos.dribbbletest.model.Shot;
 import com.henriquemelissopoulos.dribbbletest.network.Service;
+import com.henriquemelissopoulos.dribbbletest.view.adapter.RecyclerViewtThreasholdListener;
 import com.henriquemelissopoulos.dribbbletest.view.adapter.ShotAdapter;
 
 import de.greenrobot.event.EventBus;
@@ -42,16 +42,16 @@ public class MainActivity extends AppCompatActivity {
         setSupportActionBar(binding.toolbar);
 
         shotAdapter = new ShotAdapter(this, shots);
-        binding.rvShots.setLayoutManager(new LinearLayoutManager(this));
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
+        binding.rvShots.setLayoutManager(linearLayoutManager);
         binding.rvShots.setAdapter(shotAdapter);
-        binding.rvShots.setHasFixedSize(true);
+        binding.rvShots.addOnScrollListener(new RecyclerViewtThreasholdListener(linearLayoutManager) {
 
-
-        binding.toolbar.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View view) {
-                Service.getInstance().getPopularShots(1);
-                binding.setLoading(true);
+            public void onVisibleThreshold() {
+                int page = 0;
+                if (shots != null) page = (shots.size() / Config.SHOTS_PER_PAGE) + 1;
+                Service.getInstance().getPopularShots(page);
             }
         });
 
