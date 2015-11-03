@@ -5,11 +5,13 @@ import android.os.Bundle;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
+import android.util.Log;
 import android.widget.Toast;
 
 import com.henriquemelissopoulos.dribbbletest.R;
 import com.henriquemelissopoulos.dribbbletest.controller.Bus;
 import com.henriquemelissopoulos.dribbbletest.controller.Config;
+import com.henriquemelissopoulos.dribbbletest.controller.Utils;
 import com.henriquemelissopoulos.dribbbletest.databinding.ActivityMainBinding;
 import com.henriquemelissopoulos.dribbbletest.model.Shot;
 import com.henriquemelissopoulos.dribbbletest.network.Service;
@@ -50,9 +52,7 @@ public class MainActivity extends AppCompatActivity {
         threasholdListener = new RecyclerViewtThreasholdListener(linearLayoutManager) {
 
             @Override public void onVisibleThreshold() {
-                int page = 0;
-                if (shots != null) page = (shots.size() / Config.SHOTS_PER_PAGE) + 1;
-                Service.getInstance().getPopularShots(page);
+                Service.getInstance().getPopularShots(Utils.pageToRequest(shots));
             }
         };
         binding.rvShots.addOnScrollListener(threasholdListener);
@@ -82,7 +82,7 @@ public class MainActivity extends AppCompatActivity {
 
 
     public void findPopularShots() {
-        shots = realm.where(Shot.class).findAllSorted(Shot.FIELD_LIKES_COUNT, false);
+        shots = realm.where(Shot.class).findAll();
     }
 
 

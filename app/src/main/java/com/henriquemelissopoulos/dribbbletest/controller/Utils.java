@@ -6,6 +6,7 @@ import android.util.Log;
 import android.widget.TextView;
 
 import java.lang.reflect.Field;
+import java.util.Collection;
 
 /**
  * Created by h on 31/10/15.
@@ -14,6 +15,12 @@ public class Utils {
 
     public static boolean isEmpty(final CharSequence cs) {
         return cs == null || cs.length() == 0;
+    }
+
+
+    public static int pageToRequest(Collection c) {
+        if (c == null || c.isEmpty()) return 0;
+        return (c.size() / Config.SHOTS_PER_PAGE) + 1;
     }
 
 
