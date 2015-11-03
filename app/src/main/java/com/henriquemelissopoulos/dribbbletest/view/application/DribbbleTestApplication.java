@@ -21,9 +21,10 @@ public class DribbbleTestApplication extends Application {
     public void onCreate() {
         super.onCreate();
 
-//        initCrashlytics();
+        initCrashlytics();
         initRealm();
     }
+
 
     private void initCrashlytics() {
         Fabric.with(this, new Crashlytics.Builder().core(new CrashlyticsCore.Builder().disabled(Config.CRASH_REPORT).build()).build());
