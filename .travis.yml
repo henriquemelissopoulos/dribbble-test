@@ -1,4 +1,10 @@
 language: android
+cache: false
+
+env:
+  global:
+    - ADB_INSTALL_TIMEOUT=8
+
 android:
   components:
     - build-tools-23.0.1
