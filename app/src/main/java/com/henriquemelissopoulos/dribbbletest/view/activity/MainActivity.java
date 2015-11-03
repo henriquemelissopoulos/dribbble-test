@@ -2,9 +2,9 @@ package com.henriquemelissopoulos.dribbbletest.view.activity;
 
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
-import android.view.View;
 import android.widget.Toast;
 
 import com.henriquemelissopoulos.dribbbletest.R;
@@ -13,17 +13,21 @@ import com.henriquemelissopoulos.dribbbletest.controller.Config;
 import com.henriquemelissopoulos.dribbbletest.databinding.ActivityMainBinding;
 import com.henriquemelissopoulos.dribbbletest.model.Shot;
 import com.henriquemelissopoulos.dribbbletest.network.Service;
+import com.henriquemelissopoulos.dribbbletest.view.adapter.RecyclerViewtThreasholdListener;
 import com.henriquemelissopoulos.dribbbletest.view.adapter.ShotAdapter;
 
-import java.util.ArrayList;
-
 import de.greenrobot.event.EventBus;
+import io.realm.Realm;
+import io.realm.RealmResults;
 
 public class MainActivity extends AppCompatActivity {
 
-    ActivityMainBinding binding;
-    ArrayList<Shot> shots = new ArrayList<>();
-    ShotAdapter shotAdapter;
+    private ActivityMainBinding binding;
+    private Realm realm;
+    private RealmResults<Shot> shots;
+    private ShotAdapter shotAdapter;
+    private RecyclerViewtThreasholdListener threasholdListener;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,43 +37,77 @@ public class MainActivity extends AppCompatActivity {
             EventBus.getDefault().register(this);
         }
 
+        realm = Realm.getDefaultInstance();
+
         binding = DataBindingUtil.setContentView(this, R.layout.activity_main);
 
         setSupportActionBar(binding.toolbar);
 
-        shotAdapter = new ShotAdapter(shots, this);
-        binding.rvShots.setLayoutManager(new LinearLayoutManager(this));
+        shotAdapter = new ShotAdapter(this, shots);
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
+        binding.rvShots.setLayoutManager(linearLayoutManager);
         binding.rvShots.setAdapter(shotAdapter);
-        binding.rvShots.setHasFixedSize(true);
+        threasholdListener = new RecyclerViewtThreasholdListener(linearLayoutManager) {
 
-
-        binding.toolbar.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Service.getInstance().getPopularShots(1);
-                binding.setLoading(true);
+            @Override public void onVisibleThreshold() {
+                int page = 0;
+                if (shots != null) page = (shots.size() / Config.SHOTS_PER_PAGE) + 1;
+                Service.getInstance().getPopularShots(page);
             }
-        });
+        };
+        binding.rvShots.addOnScrollListener(threasholdListener);
 
+                binding.swipeRefresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+                    @Override
+                    public void onRefresh() {
+                        realm.beginTransaction();
+                        realm.clear(Shot.class);
+                        realm.commitTransaction();
+                        threasholdListener.reset();
+                        shotAdapter.notifyDataSetChanged();
+                        Service.getInstance().getPopularShots(1);
+                    }
+                });
+
+        findPopularShots();
         Service.getInstance().getPopularShots(1);
-        binding.setLoading(true);
+
+        //shots not found on DB, set loading to inform user of shots request
+        if (shots == null || shots.isEmpty()) {
+            binding.setLoading(true);
+        } else {
+            init();
+        }
     }
+
+
+    public void findPopularShots() {
+        shots = realm.where(Shot.class).findAllSorted(Shot.FIELD_LIKES_COUNT, false);
+    }
+
 
     public void init() {
         shotAdapter.addDataSet(shots);
     }
 
 
-    public void onEventMainThread(Bus<ArrayList<Shot>> bus) {
+    public void onEventMainThread(Bus<Shot> bus) {
+
+        shotAdapter.notifyDataSetChanged();
 
         if (bus.key == Config.BUS_GET_POPULAR_SHOTS) {
 
+            if (binding.swipeRefresh.isRefreshing()) binding.swipeRefresh.setRefreshing(false);
+
             if (bus.error) {
-                Toast.makeText(this, R.string.general_error_message + bus.info, Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, R.string.general_error_message, Toast.LENGTH_SHORT).show();
                 return;
             }
 
-            shots = bus.data;
+            findPopularShots();
+            if (shots == null || shots.isEmpty()) {
+                Toast.makeText(this, R.string.general_error_message, Toast.LENGTH_SHORT).show();
+            }
 
             binding.setLoading(false);
             init();
@@ -80,6 +118,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        if (realm != null) realm.close();
         EventBus.getDefault().unregister(this);
     }
 }
